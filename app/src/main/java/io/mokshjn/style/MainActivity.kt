@@ -1,6 +1,8 @@
 package io.mokshjn.style
 
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -10,6 +12,7 @@ import butterknife.bindView
 import com.flurgle.camerakit.CameraListener
 import com.flurgle.camerakit.CameraView
 import org.jetbrains.anko.startActivity
+import java.io.ByteArrayOutputStream
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,7 +31,11 @@ class MainActivity : AppCompatActivity() {
 
         camera.setCameraListener(object: CameraListener() {
             override fun onPictureTaken(jpeg: ByteArray) {
-                startActivity<StyleActivity>("image" to jpeg)
+                var bmp = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.size)
+                bmp = Bitmap.createScaledBitmap(bmp, 680, 1080, false)
+                val os = ByteArrayOutputStream()
+                bmp.compress(Bitmap.CompressFormat.JPEG, 90, os)
+                startActivity<StyleActivity>("image" to os.toByteArray())
             }
         })
 
