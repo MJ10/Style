@@ -6,4 +6,4 @@ import android.graphics.Bitmap
  * Created by moksh on 29/6/17.
  */
 
-class Style(name: String, image: Bitmap)
+data class Style(val name: String, val image: Bitmap)
