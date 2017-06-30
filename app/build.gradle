@@ -44,4 +44,5 @@ dependencies {
     implementation "org.jetbrains.anko:anko-commons:0.10.1"
     implementation "org.jetbrains.anko:anko-appcompat-v7-commons:0.10.1"
     implementation "org.jetbrains.anko:anko-support-v4-commons:0.10.1"
+    implementation 'org.tensorflow:tensorflow-android:1.2.0-preview'
 }
