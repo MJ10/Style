@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         camera.setCameraListener(object: CameraListener() {
             override fun onPictureTaken(jpeg: ByteArray) {
                 var bmp = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.size)
-                bmp = Bitmap.createScaledBitmap(bmp, 680, 1080, false)
+                bmp = Bitmap.createScaledBitmap(bmp, 720, 1080, false)
                 val os = ByteArrayOutputStream()
                 bmp.compress(Bitmap.CompressFormat.JPEG, 90, os)
                 startActivity<StyleActivity>("image" to os.toByteArray())

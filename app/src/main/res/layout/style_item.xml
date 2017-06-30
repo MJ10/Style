@@ -6,7 +6,7 @@
 
     <ImageView
         android:id="@+id/styleImage"
-        android:layout_width="match_parent"
+        android:layout_width="100dp"
         android:layout_height="match_parent"
         android:contentDescription="@string/style_item"
         android:clickable="true"
