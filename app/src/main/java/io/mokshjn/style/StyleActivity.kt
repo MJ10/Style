@@ -41,6 +41,8 @@ class StyleActivity : AppCompatActivity() {
         processInput()
         loadStyles()
         loadRecyclerView()
+
+        stylizeImage(0)
     }
 
     fun loadTF() {
@@ -82,21 +84,21 @@ class StyleActivity : AppCompatActivity() {
         val croppedBmp = Bitmap.createScaledBitmap(ogImageBmp, 720, 720, false)
         croppedBmp.getPixels(intValues, 0, croppedBmp.width, 0, 0, croppedBmp.width, croppedBmp.height)
 
-        for (i in 0..intValues.size) {
+        for (i in 0..intValues.size-1) {
             val int = intValues[i]
             floatValues[i * 3] = ((int shr 16) and 0xFF) / 255.0f
             floatValues[i*3 + 1] = ((int shr 8) and 0xFF) / 255.0f
             floatValues[i*3 + 2] = (int and 0xFF) / 255.0f
         }
 
-        inferenceInterface?.feed(INPUT_NODE, floatValues, 720, 720, 3)
+        inferenceInterface?.feed(INPUT_NODE, floatValues, 1 , 720, 720, 3)
         inferenceInterface?.feed(STYLE_NODE, styleVals, NUM_STYLES.toLong())
 
         inferenceInterface?.run(arrayOf(OUTPUT_NODE), false)
 
         inferenceInterface?.fetch(OUTPUT_NODE, floatValues)
 
-        for (i in 0..intValues.size) {
+        for (i in 0..intValues.size-1) {
             intValues[i] = 0xFF000000.toInt() or ((floatValues[i * 3] * 255).toInt() shl 16) or ((floatValues[i * 3 + 1] * 255).toInt() shl 8) or (floatValues[i * 3 + 2] * 255).toInt()
         }
 
