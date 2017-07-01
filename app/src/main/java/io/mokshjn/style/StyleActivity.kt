@@ -12,27 +12,26 @@ import android.widget.LinearLayout
 import butterknife.bindView
 import io.mokshjn.style.adapter.StylesAdapter
 import io.mokshjn.style.models.Style
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface
 
 class StyleActivity : AppCompatActivity() {
-
     val imageView: ImageView by bindView(R.id.styledImage)
+
     val styles = ArrayList<Style>()
     val recyclerView: RecyclerView by bindView(R.id.styles)
     val NUM_STYLES = 26
-
     private val MODEL_FILE = "file:///android_asset/stylize_quantized.pb"
+
     private val INPUT_NODE = "input"
     private val STYLE_NODE = "style_num"
     private val OUTPUT_NODE = "transformer/expand/conv3/conv/Sigmoid"
-
     var inferenceInterface: TensorFlowInferenceInterface? = null
 
     var ogImage: ByteArray? = null
+
     var ogImageBmp: Bitmap? = null
     var finalImage: Bitmap? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_style)
@@ -42,7 +41,7 @@ class StyleActivity : AppCompatActivity() {
         loadStyles()
         loadRecyclerView()
 
-        stylizeImage(0)
+//        stylizeImage(0)
     }
 
     fun loadTF() {
@@ -58,8 +57,16 @@ class StyleActivity : AppCompatActivity() {
 
     fun loadRecyclerView() {
         val adapter = StylesAdapter(styles) { i: Int ->
-            toast("Clicked " + i)
-            stylizeImage(i)
+            val dialog = indeterminateProgressDialog(message = "Performing Style Transfer...", title = "Processing")
+//            Log.d("onClick", "Clicked!")
+            doAsync {
+                val bmp = stylizeImage(i)
+                uiThread {
+                    imageView.setImageBitmap(bmp)
+                    dialog.dismiss()
+                }
+            }
+
         }
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = adapter
@@ -74,7 +81,7 @@ class StyleActivity : AppCompatActivity() {
         }
     }
 
-    fun stylizeImage(styleIndex: Int) {
+    fun stylizeImage(styleIndex: Int): Bitmap {
         val styleVals = FloatArray(NUM_STYLES, {0f})
         styleVals[styleIndex] = 1.0f
 
@@ -104,6 +111,8 @@ class StyleActivity : AppCompatActivity() {
 
         croppedBmp.setPixels(intValues, 0, 720, 0, 0, 720, 720)
 
-        imageView.setImageBitmap(croppedBmp)
+//        imageView.setImageBitmap(croppedBmp)
+        return croppedBmp
     }
+
 }
