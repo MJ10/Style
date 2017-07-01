@@ -1,5 +1,7 @@
 package io.mokshjn.style
 
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -8,6 +10,7 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -18,6 +21,7 @@ import com.flurgle.camerakit.CameraListener
 import com.flurgle.camerakit.CameraView
 import org.jetbrains.anko.startActivity
 import java.io.ByteArrayOutputStream
+import java.io.InputStream
 
 
 class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
@@ -26,6 +30,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
     val fab: FloatingActionButton by bindView(R.id.fab)
     val options: ImageButton by bindView(R.id.options)
     val RC_CAMERA = 100
+    val RC_SELECT = 101
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,8 +74,36 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
         }
     }
 
-    fun importImage() {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                RC_SELECT -> {
+                    val uri = data.data
+                    var istream: InputStream? = null
+                    try {
+                        istream = contentResolver.openInputStream(uri)
+                    } catch (e: Exception) {
+                        Log.i("Open", e.toString())
+                    }
+                    val bmp = BitmapFactory.decodeStream(istream)
+                    passSelectedImage(bmp)
+                }
+            }
+        }
+    }
 
+    fun importImage() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Select a picture"), RC_SELECT)
+    }
+
+    fun passSelectedImage(bmp: Bitmap) {
+        val nbmp = Bitmap.createScaledBitmap(bmp, 720, 1080, false)
+        val os = ByteArrayOutputStream()
+        nbmp.compress(Bitmap.CompressFormat.JPEG, 90, os)
+        startActivity<StyleActivity>("image" to os.toByteArray())
     }
 
     override fun onResume() {
