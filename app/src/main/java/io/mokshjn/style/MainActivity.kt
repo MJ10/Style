@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
                 val os = ByteArrayOutputStream()
                 bmp.compress(Bitmap.CompressFormat.JPEG, 90, os)
                 startActivity<StyleActivity>("image" to os.toByteArray())
+                finish()
             }
         })
 
@@ -104,6 +105,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
         val os = ByteArrayOutputStream()
         nbmp.compress(Bitmap.CompressFormat.JPEG, 90, os)
         startActivity<StyleActivity>("image" to os.toByteArray())
+        finish()
     }
 
     override fun onResume() {

@@ -34,6 +34,9 @@
         android:contentDescription="@string/options"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="40dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?selectableItemBackground"
         android:layout_marginBottom="60dp"/>
 
 </FrameLayout>
