@@ -24,4 +24,16 @@
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="60dp"/>
 
+    <ImageButton
+        android:id="@+id/options"
+        android:background="@android:color/transparent"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_more_vert_black"
+        android:tint="@color/colorAccent"
+        android:contentDescription="@string/options"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="60dp"/>
+
 </FrameLayout>

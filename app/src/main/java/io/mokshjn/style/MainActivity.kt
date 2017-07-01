@@ -8,6 +8,11 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.ImageButton
+import android.widget.PopupMenu
 import butterknife.bindView
 import com.flurgle.camerakit.CameraListener
 import com.flurgle.camerakit.CameraView
@@ -15,10 +20,11 @@ import org.jetbrains.anko.startActivity
 import java.io.ByteArrayOutputStream
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
 
     val camera: CameraView by bindView(R.id.camera)
     val fab: FloatingActionButton by bindView(R.id.fab)
+    val options: ImageButton by bindView(R.id.options)
     val RC_CAMERA = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +46,15 @@ class MainActivity : AppCompatActivity() {
         })
 
         fab.setOnClickListener { camera.captureImage() }
+
+        options.setOnClickListener { v: View -> showPopup(v) }
+    }
+
+    private fun  showPopup(v: View) {
+        val popup = PopupMenu(this, v)
+        popup.setOnMenuItemClickListener(this)
+        popup.menuInflater.inflate(R.menu.menu_main, popup.menu)
+        popup.show()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -54,6 +69,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun importImage() {
+
+    }
+
     override fun onResume() {
         super.onResume()
         camera.start()
@@ -63,4 +82,14 @@ class MainActivity : AppCompatActivity() {
         camera.stop()
         super.onPause()
     }
+
+    override fun onMenuItemClick(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_import -> {
+                importImage()
+            }
+        }
+        return false
+    }
+
 }

@@ -4,4 +4,6 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="styled_image">Styled Image</string>
     <string name="style_item">style item</string>
+    <string name="options">Options</string>
+    <string name="ac_import">Import</string>
 </resources>

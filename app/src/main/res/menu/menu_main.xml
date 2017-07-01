@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="io.mokshjn.style.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_import"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:title="@string/ac_import" />
 </menu>
