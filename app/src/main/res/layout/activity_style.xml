@@ -16,6 +16,12 @@
         android:contentDescription="@string/styled_image"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <SeekBar
+        android:id="@+id/styleSeek"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:progress="100"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/styles"
         android:layout_width="match_parent"
