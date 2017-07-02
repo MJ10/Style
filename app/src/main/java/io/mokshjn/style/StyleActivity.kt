@@ -4,8 +4,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.SeekBar
 import butterknife.bindView
@@ -13,6 +17,10 @@ import io.mokshjn.style.adapter.StylesAdapter
 import io.mokshjn.style.models.Style
 import org.jetbrains.anko.*
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface
+import java.io.File
+import java.io.FileOutputStream
+import java.sql.Time
+import java.util.*
 
 class StyleActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
 
@@ -32,6 +40,7 @@ class StyleActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
     var ogImage: ByteArray? = null
     var selectedStyle: Int = -1
     var ogImageBmp: Bitmap? = null
+    var finalBmp: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +50,25 @@ class StyleActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
         processInput()
         loadStyles()
         loadViews()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_save, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_save -> {
+                doAsync {
+                    saveBitmap()
+                    uiThread {
+                        toast("Saved to storage")
+                    }
+                }
+            }
+        }
+        return false
     }
 
     fun loadTF() {
@@ -59,9 +87,9 @@ class StyleActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
             selectedStyle = i
             val dialog = indeterminateProgressDialog(message = "Performing Style Transfer...", title = "Processing")
             doAsync {
-                val bmp = stylizeImage(i, seekbar.progress)
+                finalBmp = stylizeImage(i, seekbar.progress)
                 uiThread {
-                    setBitmap(bmp)
+                    setBitmap(finalBmp as Bitmap)
                     dialog.dismiss()
                 }
             }
@@ -83,6 +111,35 @@ class StyleActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
 
     fun setBitmap(bmp: Bitmap) {
         imageView.setImageBitmap(bmp)
+    }
+
+    fun saveBitmap() {
+        if (finalBmp == null) {
+            toast("Please apply a style first!")
+            return
+        }
+        val now = Date()
+        val timeString = now.year.toString() + now.month.toString() + now.date.toString() + "_" + Time(now.time).toString()
+        val root = Environment.getExternalStorageDirectory()
+        val dir = File(root, "style")
+        if(!dir.exists()) {
+            if (!dir.mkdirs()) {
+                toast("Error creating directory")
+            }
+        }
+        val filename = timeString + ".jpg"
+        val file = File(dir, filename)
+        if (file.exists()) {
+            file.delete()
+        }
+        try {
+            val out = FileOutputStream(file)
+            finalBmp?.compress(Bitmap.CompressFormat.JPEG, 99, out)
+            out.flush()
+            out.close()
+        } catch (e:Exception) {
+            Log.d("SaveError", e.message)
+        }
     }
 
     fun stylizeImage(styleIndex: Int, strength: Int): Bitmap {
