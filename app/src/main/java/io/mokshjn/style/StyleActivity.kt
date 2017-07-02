@@ -21,6 +21,12 @@ import java.io.File
 import java.io.FileOutputStream
 import java.sql.Time
 import java.util.*
+import android.view.ViewAnimationUtils
+import android.animation.Animator
+import android.opengl.ETC1.getHeight
+import android.opengl.ETC1.getWidth
+
+
 
 class StyleActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
 
@@ -111,7 +117,13 @@ class StyleActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
     }
 
     fun setBitmap(bmp: Bitmap) {
+        val cx = (imageView.left + imageView.right) / 2
+        val cy = imageView.top
+        val finalRadius = Math.max(imageView.width, imageView.height)
+
+        val anim = ViewAnimationUtils.createCircularReveal(imageView, cx, cy, 0f, finalRadius.toFloat())
         imageView.setImageBitmap(bmp)
+        anim.start()
     }
 
     fun saveBitmap() {
@@ -171,9 +183,10 @@ class StyleActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
             intValues[i] = 0xFF000000.toInt() or ((floatValues[i * 3] * 255).toInt() shl 16) or ((floatValues[i * 3 + 1] * 255).toInt() shl 8) or (floatValues[i * 3 + 2] * 255).toInt()
         }
 
-        tempBmp.setPixels(intValues, 0, IMG_SIZE, 0, 0, IMG_SIZE, IMG_SIZE)
+        val newBmp = tempBmp.copy(Bitmap.Config.ARGB_8888, true)
+        newBmp.setPixels(intValues, 0, IMG_SIZE, 0, 0, IMG_SIZE, IMG_SIZE)
 
-        return tempBmp
+        return newBmp
     }
 
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
