@@ -28,6 +28,7 @@ class StyleActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
     val seekbar: SeekBar by bindView(R.id.styleSeek)
     val recyclerView: RecyclerView by bindView(R.id.styles)
 
+    val IMG_SIZE = 900
     val NUM_STYLES = 26
     val styles = ArrayList<Style>()
 
@@ -146,11 +147,11 @@ class StyleActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
         val styleVals = FloatArray(NUM_STYLES, {0f})
         styleVals[styleIndex] = (strength / 100f)
 
-        val intValues = IntArray(720 * 720)
-        val floatValues = FloatArray(720 * 720 * 3)
+        val intValues = IntArray(IMG_SIZE* IMG_SIZE)
+        val floatValues = FloatArray(IMG_SIZE * IMG_SIZE * 3)
 
-        val croppedBmp = Bitmap.createScaledBitmap(ogImageBmp, 720, 720, false)
-        croppedBmp.getPixels(intValues, 0, croppedBmp.width, 0, 0, croppedBmp.width, croppedBmp.height)
+        val tempBmp = Bitmap.createScaledBitmap(ogImageBmp, IMG_SIZE, IMG_SIZE, false)
+        tempBmp.getPixels(intValues, 0, IMG_SIZE, 0, 0, IMG_SIZE, IMG_SIZE)
 
         for (i in 0..intValues.size-1) {
             val int = intValues[i]
@@ -159,7 +160,7 @@ class StyleActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
             floatValues[i*3 + 2] = (int and 0xFF) / 255.0f
         }
 
-        inferenceInterface?.feed(INPUT_NODE, floatValues, 1 , 720, 720, 3)
+        inferenceInterface?.feed(INPUT_NODE, floatValues, 1 , IMG_SIZE.toLong(), IMG_SIZE.toLong(), 3)
         inferenceInterface?.feed(STYLE_NODE, styleVals, NUM_STYLES.toLong())
 
         inferenceInterface?.run(arrayOf(OUTPUT_NODE), false)
@@ -170,9 +171,9 @@ class StyleActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
             intValues[i] = 0xFF000000.toInt() or ((floatValues[i * 3] * 255).toInt() shl 16) or ((floatValues[i * 3 + 1] * 255).toInt() shl 8) or (floatValues[i * 3 + 2] * 255).toInt()
         }
 
-        croppedBmp.setPixels(intValues, 0, 720, 0, 0, 720, 720)
+        tempBmp.setPixels(intValues, 0, IMG_SIZE, 0, 0, IMG_SIZE, IMG_SIZE)
 
-        return croppedBmp
+        return tempBmp
     }
 
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {

@@ -11,7 +11,6 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
@@ -31,6 +30,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
     val options: ImageButton by bindView(R.id.options)
     val RC_CAMERA = 100
     val RC_SELECT = 101
+    val IMG_SIZE = 900
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
         camera.setCameraListener(object: CameraListener() {
             override fun onPictureTaken(jpeg: ByteArray) {
                 var bmp = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.size)
-                bmp = Bitmap.createScaledBitmap(bmp, 720, 1080, false)
+                bmp = Bitmap.createScaledBitmap(bmp, IMG_SIZE, IMG_SIZE, false)
                 val os = ByteArrayOutputStream()
                 bmp.compress(Bitmap.CompressFormat.JPEG, 90, os)
                 startActivity<StyleActivity>("image" to os.toByteArray())
@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
     }
 
     fun passSelectedImage(bmp: Bitmap) {
-        val nbmp = Bitmap.createScaledBitmap(bmp, 720, 1080, false)
+        val nbmp = Bitmap.createScaledBitmap(bmp, IMG_SIZE, IMG_SIZE, false)
         val os = ByteArrayOutputStream()
         nbmp.compress(Bitmap.CompressFormat.JPEG, 90, os)
         startActivity<StyleActivity>("image" to os.toByteArray())
