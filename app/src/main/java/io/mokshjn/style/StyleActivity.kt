@@ -156,7 +156,8 @@ class StyleActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
     }
 
     fun stylizeImage(styleIndex: Int, strength: Int): Bitmap {
-        val styleVals = FloatArray(NUM_STYLES, {0f})
+        val otherStyles = (1.0f - strength) / (NUM_STYLES - 1)
+        val styleVals = FloatArray(NUM_STYLES, {otherStyles})
         styleVals[styleIndex] = (strength / 100f)
 
         val intValues = IntArray(IMG_SIZE* IMG_SIZE)
@@ -189,17 +190,16 @@ class StyleActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
         return newBmp
     }
 
-    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
+    override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+    override fun onStopTrackingTouch(seekBar: SeekBar) {
         val dialog = indeterminateProgressDialog(message = "Performing Style Transfer...", title = "Processing")
         doAsync {
-            val bmp = stylizeImage(selectedStyle, progress)
+            val bmp = stylizeImage(selectedStyle, seekBar.progress)
             uiThread {
                 setBitmap(bmp)
                 dialog.dismiss()
             }
         }
     }
-
-    override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-    override fun onStopTrackingTouch(seekBar: SeekBar?) {}
 }
