@@ -156,7 +156,7 @@ class StyleActivity : AppCompatActivity(), SeekBar.OnSeekBarChangeListener {
     }
 
     fun stylizeImage(styleIndex: Int, strength: Int): Bitmap {
-        val otherStyles = (1.0f - strength) / (NUM_STYLES - 1)
+        val otherStyles = ((100f - strength) / (NUM_STYLES - 1)) / 100f
         val styleVals = FloatArray(NUM_STYLES, {otherStyles})
         styleVals[styleIndex] = (strength / 100f)
 
