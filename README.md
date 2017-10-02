@@ -13,5 +13,11 @@ You can download the pre-built apk [here](https://github.com/MJ10/Style/releases
 - [Anko](https://github.com/Kotlin/anko)
 - [CameraKit](https://github.com/gogopop/CameraKit-Android)
 
+## Special Thanks
+Thanks to all [contributors](https://github.com/MJ10/Style/graphs/contributors) for extending and improving `Style`.
+
+## Contributing
+Check our [CONTRIBUTING GUIDE](https://github.com/MJ10/Style/blob/master/CONTRIBUTING.md) before open an issue/PR.
+
 ## License
 This project is licensed under the [MIT License](https://github.com/MJ10/Style/blob/master/LICENSE.md)
